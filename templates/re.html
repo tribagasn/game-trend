@@ -1,0 +1,59 @@
+<!-- templates/re.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detail Resident Evil</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body style="background-color: #0f172a; color: white">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">🎮 GameTrend</a>
+      </div>
+    </nav>
+
+    <div class="container my-5">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <img
+            src="{{ url_for('static', filename='image/re.jpg') }}"
+            alt="Resident Evil"
+            class="img-fluid rounded shadow"
+          />
+        </div>
+        <div class="col-md-6">
+          <h2 class="mb-3">Resident Evil</h2>
+          <p>
+            Resident Evil adalah game survival horror legendaris yang memadukan
+            atmosfer menyeramkan, cerita mendalam, dan teka-teki menantang.
+            Pemain menjelajahi lokasi gelap, melawan zombie dan makhluk hasil
+            eksperimen biologis.
+          </p>
+          <ul>
+            <li><strong>Genre:</strong> Survival Horror</li>
+            <li><strong>Developer:</strong> Capcom</li>
+            <li><strong>Platform:</strong> PC, PlayStation, Xbox</li>
+            <li><strong>Mode:</strong> Single Player</li>
+          </ul>
+          <p>
+            Sejak tahun 1996, Resident Evil telah menjadi salah satu waralaba
+            game horror paling sukses, dengan banyak seri dan adaptasi film
+            serta remake modern.
+          </p>
+          <a href="/" class="btn btn-primary mt-3">← Kembali ke Dashboard</a>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

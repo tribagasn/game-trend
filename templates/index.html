@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | GameTrend</title>
+    <style>
+      body {
+        background-color: #0f172a;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+
+      header {
+        padding: 20px;
+        background-color: #1e293b;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .brand {
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      nav a {
+        color: white;
+        margin-left: 20px;
+        text-decoration: none;
+      }
+
+      nav a:hover {
+        text-decoration: underline;
+      }
+
+      h1 {
+        text-align: center;
+        color: white;
+        margin-top: 30px;
+      }
+
+      .card-container {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 24px;
+        padding: 40px 20px;
+      }
+
+      .card {
+        background-color: #1e293b;
+        padding: 20px;
+        border-radius: 16px;
+        width: 250px;
+        transition: 0.3s;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        color: white;
+      }
+
+      .card:hover {
+        background-color: #334155;
+      }
+
+      .card img {
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+        margin-bottom: 12px;
+      }
+
+      .card h3 {
+        color: #38bdf8;
+        margin-bottom: 10px;
+      }
+
+      .card p {
+        font-size: 14px;
+        margin-bottom: 16px;
+      }
+
+      .card a {
+        background-color: #2563eb;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 8px;
+        text-decoration: none;
+      }
+
+      .card a:hover {
+        background-color: #1d4ed8;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="brand">🎮 GameTrend</div>
+      <nav>
+        <a href="/">Dashboard</a>
+        <a href="/analytic">Analytic</a>
+      </nav>
+    </header>
+
+    <h1>Dashboard</h1>
+
+    <div class="card-container">
+      <div class="card">
+        <img src="/static/image/mobile_legends.jpg" alt="Mobile Legends" />
+        <h3>Mobile Legends</h3>
+        <p>
+          Game MOBA populer di Asia Tenggara dengan gameplay cepat dan dinamis.
+        </p>
+        <a href="/ml">Lihat Detail</a>
+      </div>
+
+      <div class="card">
+        <img src="/static/image/pubg.jpg" alt="PUBG" />
+        <h3>PUBG</h3>
+        <p>Game battle royale realistis dengan elemen strategi dan survival.</p>
+        <a href="/pubg">Lihat Detail</a>
+      </div>
+
+      <div class="card">
+        <img src="/static/image/re.jpg" alt="Resident Evil" />
+        <h3>Resident Evil</h3>
+        <p>Game survival horror legendaris dengan elemen cerita dan misteri.</p>
+        <a href="/re">Lihat Detail</a>
+      </div>
+    </div>
+  </body>
+</html>

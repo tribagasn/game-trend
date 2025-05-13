@@ -1,0 +1,59 @@
+<!-- templates/pubg.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detail PUBG</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body style="background-color: #0f172a; color: white">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">🎮 GameTrend</a>
+      </div>
+    </nav>
+
+    <div class="container my-5">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <img
+            src="{{ url_for('static', filename='image/pubg.jpg') }}"
+            alt="PUBG"
+            class="img-fluid rounded shadow"
+          />
+        </div>
+        <div class="col-md-6">
+          <h2 class="mb-3">PUBG: Battlegrounds</h2>
+          <p>
+            PlayerUnknown's Battlegrounds (PUBG) adalah game battle royale
+            realistis yang menguji kemampuan strategi, survival, dan ketepatan
+            menembak. Pemain diterjunkan ke sebuah pulau dan harus bertahan
+            hingga akhir dengan mencari senjata, armor, dan kendaraan.
+          </p>
+          <ul>
+            <li><strong>Genre:</strong> Battle Royale, Shooter</li>
+            <li><strong>Developer:</strong> PUBG Studios</li>
+            <li><strong>Platform:</strong> PC, Console, Mobile</li>
+            <li><strong>Mode:</strong> Solo, Duo, Squad</li>
+          </ul>
+          <p>
+            PUBG menjadi pelopor genre battle royale dan membuka jalan untuk
+            banyak game sejenis. Mode permainannya yang intens menjadikannya
+            populer di kalangan gamer kompetitif.
+          </p>
+          <a href="/" class="btn btn-primary mt-3">← Kembali ke Dashboard</a>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
