@@ -1,0 +1,8 @@
+{
+  "mobile_legends": {
+    "title": "Mobile Legends",
+    "description": "Game MOBA populer di Asia Tenggara dengan gameplay cepat dan dinamis.",
+    "image": "static/gif/mobile_legends.gif",
+    "link": "/ml"
+  }
+}

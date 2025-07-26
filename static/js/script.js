@@ -8,7 +8,23 @@ document.addEventListener("DOMContentLoaded", function () {
     .catch((error) => console.error("Error loading the CSV file: ", error));
 });
 
-function parseCSV(csvData) {
+/*************  ✨ Windsurf Command ⭐  *************/
+/**
+ * Parse a CSV string containing trend data into an object.
+ *
+ * @param {string} csvData - The CSV string to be parsed.
+ * @returns {Object} An object with the following properties:
+ *  - dates: An array of dates for the trend data.
+ *  - mobileLegends: An array of numbers representing the popularity trend of
+ *    Mobile Legends.
+ *  - pubgMobile: An array of numbers representing the popularity trend of
+ *    PUBG Mobile.
+ *  - residentEvil: An array of numbers representing the popularity trend of
+ *    Resident Evil.
+ */
+/*******  4d5c12f1-6278-4de1-81dc-fa3854e908b5  *******/ function parseCSV(
+  csvData
+) {
   const lines = csvData.split("\n");
   const headers = lines[0].split(",");
   const dates = [];

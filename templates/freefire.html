@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detail Free Fire</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #0f172a;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-image: url("/static/image/background_ff.png"); /* Ganti sesuai file */
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        position: relative;
+        color: white;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(15, 23, 42, 0.85);
+        z-index: -1;
+      }
+      header {
+        padding: 20px;
+        background-color: #1e293b;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+    </style>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body style="background-color: #0f172a; color: white">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">🎮 GameTrend</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </nav>
+    <div class="container my-5">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <img
+            src="/static/image/front_ff.png"
+            alt="Free Fire"
+            class="img-fluid rounded shadow"
+          />
+          <div class="mt-4">
+            <h5>Gameplay Free Fire</h5>
+            <div class="ratio ratio-16x9 rounded shadow">
+              <iframe
+                src="https://www.youtube.com/embed/oq2Rz2I11l0?autoplay=1&mute=1"
+                title="Free Fire Gameplay"
+                allowfullscreen
+              ></iframe>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <h2 class="mb-3">Free Fire</h2>
+          <p>
+            Free Fire adalah game battle royale yang dikembangkan oleh Garena.
+            Dalam game ini, 50 pemain diterjunkan ke pulau terpencil untuk
+            bertarung demi bertahan hidup hingga akhir.
+          </p>
+          <ul>
+            <li><strong>Genre:</strong> Battle Royale</li>
+            <li><strong>Developer:</strong> Garena</li>
+            <li><strong>Platform:</strong> Android, iOS</li>
+            <li><strong>Mode:</strong> Online Multiplayer</li>
+          </ul>
+          <p>
+            Free Fire dikenal dengan durasi match yang cepat, karakter dengan
+            skill unik, dan berbagai mode permainan seru. Game ini sangat
+            populer di kalangan pemain mobile di Asia Tenggara dan Amerika
+            Latin.
+          </p>
+
+          <div class="mt-4">
+            <h5>Cara Download Free Fire</h5>
+            <ol>
+              <li>
+                Buka aplikasi <strong>Google Play Store</strong> (Android) atau
+                <strong>App Store</strong> (iOS).
+              </li>
+              <li>
+                Ketik "<strong>Garena Free Fire</strong>" di kolom pencarian.
+              </li>
+              <li>
+                Pilih aplikasi resmi dari <strong>Garena International</strong>.
+              </li>
+              <li>Tekan tombol <strong>Install</strong>.</li>
+              <li>Setelah selesai, buka dan mainkan gamenya.</li>
+            </ol>
+            <a href="/" class="btn btn-primary mt-3">← Kembali ke Dashboard</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

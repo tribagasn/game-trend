@@ -4,131 +4,316 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard | GameTrend</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      body {
-        background-color: #0f172a;
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 100vw;
+        background: rgba(15, 23, 42, 0.85);
+        z-index: -1;
       }
-
-      header {
-        padding: 20px;
-        background-color: #1e293b;
-        color: white;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+      
+      .glow-text {
+        text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
       }
-
-      .brand {
-        font-size: 20px;
-        font-weight: bold;
+      
+      .card-glow {
+        box-shadow: 0 0 20px rgba(56, 189, 248, 0.1);
       }
-
-      nav a {
-        color: white;
-        margin-left: 20px;
-        text-decoration: none;
+      
+      .card-hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(56, 189, 248, 0.3);
       }
-
-      nav a:hover {
-        text-decoration: underline;
+      
+      .floating {
+        animation: floating 3s ease-in-out infinite;
       }
-
-      h1 {
-        text-align: center;
-        color: white;
-        margin-top: 30px;
+      
+      @keyframes floating {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
       }
-
-      .card-container {
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 24px;
-        padding: 40px 20px;
+      
+      .pulse-ring {
+        animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
       }
-
-      .card {
-        background-color: #1e293b;
-        padding: 20px;
-        border-radius: 16px;
-        width: 250px;
-        transition: 0.3s;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        text-align: center;
-        color: white;
+      
+      @keyframes pulse-ring {
+        0% { transform: scale(0.33); }
+        80%, 100% { opacity: 0; }
       }
-
-      .card:hover {
-        background-color: #334155;
+      
+      .gradient-border {
+        background: linear-gradient(45deg, transparent, rgba(56, 189, 248, 0.3), transparent);
+        background-size: 400% 400%;
+        animation: gradient-move 3s ease infinite;
       }
-
-      .card img {
-        width: 100%;
-        height: auto;
-        border-radius: 12px;
-        margin-bottom: 12px;
-      }
-
-      .card h3 {
-        color: #38bdf8;
-        margin-bottom: 10px;
-      }
-
-      .card p {
-        font-size: 14px;
-        margin-bottom: 16px;
-      }
-
-      .card a {
-        background-color: #2563eb;
-        color: white;
-        padding: 8px 16px;
-        border-radius: 8px;
-        text-decoration: none;
-      }
-
-      .card a:hover {
-        background-color: #1d4ed8;
+      
+      @keyframes gradient-move {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
       }
     </style>
   </head>
-  <body>
-    <header>
-      <div class="brand">🎮 GameTrend</div>
-      <nav>
-        <a href="/">Dashboard</a>
-        <a href="/analytic">Analytic</a>
-      </nav>
-    </header>
+  <body
+    class="bg-slate-900 bg-fixed bg-cover bg-center text-white overflow-x-hidden"
+    style="background-image: url('/static/image/gamers.png')"
+  >
+    <div id="navbar-container"></div>
 
-    <h1>Dashboard</h1>
+    <div class="relative">
+      <div class="absolute inset-0 bg-gradient-to-b from-sky-500/10 via-transparent to-cyan-500/10 pointer-events-none"></div>
+      
+      <div class="max-w-7xl mx-auto px-4 pt-12 pb-8 text-center relative">
+        <div class="floating">
+          <div class="inline-flex items-center gap-3 mb-6">
+            <div class="relative">
+              <div class="absolute inset-0 pulse-ring bg-sky-400 rounded-full"></div>
+              <div class="w-16 h-16 bg-gradient-to-br from-sky-400 via-cyan-500 to-blue-600 rounded-full flex items-center justify-center shadow-2xl shadow-sky-500/30">
+                <span class="text-2xl">🎮</span>
+              </div>
+            </div>
+            <div>
+              <h1 class="text-5xl md:text-6xl font-bold bg-gradient-to-r from-sky-400 via-cyan-400 to-blue-400 bg-clip-text text-transparent glow-text">
+                GameTrend
+              </h1>
+              <p class="text-sky-300 text-lg font-medium">Gaming Analytics Dashboard</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="max-w-2xl mx-auto mb-12">
+          <p class="text-xl text-gray-300 leading-relaxed">
+            Discover trending games, analyze performance metrics, and stay ahead of the gaming curve with real-time data insights
+          </p>
+        </div>
 
-    <div class="card-container">
-      <div class="card">
-        <img src="/static/image/mobile_legends.jpg" alt="Mobile Legends" />
-        <h3>Mobile Legends</h3>
-        <p>
-          Game MOBA populer di Asia Tenggara dengan gameplay cepat dan dinamis.
-        </p>
-        <a href="/ml">Lihat Detail</a>
-      </div>
-
-      <div class="card">
-        <img src="/static/image/pubg.jpg" alt="PUBG" />
-        <h3>PUBG</h3>
-        <p>Game battle royale realistis dengan elemen strategi dan survival.</p>
-        <a href="/pubg">Lihat Detail</a>
-      </div>
-
-      <div class="card">
-        <img src="/static/image/re.jpg" alt="Resident Evil" />
-        <h3>Resident Evil</h3>
-        <p>Game survival horror legendaris dengan elemen cerita dan misteri.</p>
-        <a href="/re">Lihat Detail</a>
+        <div class="flex flex-wrap justify-center gap-4 mb-16">
+          <div class="bg-slate-800/80 backdrop-blur-sm px-6 py-3 rounded-full border border-sky-500/30">
+            <span class="text-sky-400 font-semibold">📊 Real-time Analytics</span>
+          </div>
+          <div class="bg-slate-800/80 backdrop-blur-sm px-6 py-3 rounded-full border border-cyan-500/30">
+            <span class="text-cyan-400 font-semibold">🔥 Trending Games</span>
+          </div>
+          <div class="bg-slate-800/80 backdrop-blur-sm px-6 py-3 rounded-full border border-blue-500/30">
+            <span class="text-blue-400 font-semibold">📈 Performance Metrics</span>
+          </div>
+        </div>
       </div>
     </div>
+
+    <div class="max-w-7xl mx-auto px-4 pb-16">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-white mb-4">Featured Games Collection</h2>
+        <div class="w-24 h-1 bg-gradient-to-r from-sky-400 to-cyan-400 mx-auto rounded-full"></div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="group bg-slate-800/90 backdrop-blur-sm rounded-2xl overflow-hidden card-glow hover:card-hover transition-all duration-500 gradient-border p-0.5">
+          <div class="bg-slate-800 rounded-2xl overflow-hidden h-full">
+            <div class="relative overflow-hidden">
+              <img
+                id="ml-image"
+                src="/static/gif/mobile_legends.gif"
+                alt="Mobile Legends"
+                class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-800 via-transparent to-transparent"></div>
+              <div class="absolute top-4 right-4 bg-sky-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                #1 MOBA
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 id="ml-title" class="text-xl font-bold text-sky-400 mb-2 group-hover:text-sky-300 transition-colors">
+                Mobile Legends
+              </h3>
+              <p id="ml-desc" class="text-sm text-gray-300 mb-4 leading-relaxed">
+                Game MOBA populer di Asia Tenggara dengan gameplay cepat dan dinamis.
+              </p>
+              <a
+                id="ml-link"
+                href="/ml"
+                class="inline-flex items-center gap-2 bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white text-sm font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-sky-500/30 transition-all duration-300 transform hover:scale-105"
+              >
+                <span>Lihat Detail</span>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="group bg-slate-800/90 backdrop-blur-sm rounded-2xl overflow-hidden card-glow hover:card-hover transition-all duration-500 gradient-border p-0.5">
+          <div class="bg-slate-800 rounded-2xl overflow-hidden h-full">
+            <div class="relative overflow-hidden">
+              <img
+                src="/static/gif/pubg.gif"
+                alt="PUBG"
+                class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-800 via-transparent to-transparent"></div>
+              <div class="absolute top-4 right-4 bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                Battle Royale
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-bold text-sky-400 mb-2 group-hover:text-sky-300 transition-colors">PUBG</h3>
+              <p class="text-sm text-gray-300 mb-4 leading-relaxed">
+                Game battle royale realistis dengan elemen strategi dan survival.
+              </p>
+              <a
+                href="/pubg"
+                class="inline-flex items-center gap-2 bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white text-sm font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-sky-500/30 transition-all duration-300 transform hover:scale-105"
+              >
+                <span>Lihat Detail</span>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="group bg-slate-800/90 backdrop-blur-sm rounded-2xl overflow-hidden card-glow hover:card-hover transition-all duration-500 gradient-border p-0.5">
+          <div class="bg-slate-800 rounded-2xl overflow-hidden h-full">
+            <div class="relative overflow-hidden">
+              <img
+                src="/static/gif/re.gif"
+                alt="Resident Evil"
+                class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-800 via-transparent to-transparent"></div>
+              <div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                Horror
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-bold text-sky-400 mb-2 group-hover:text-sky-300 transition-colors">Resident Evil</h3>
+              <p class="text-sm text-gray-300 mb-4 leading-relaxed">
+                Game survival horror legendaris dengan elemen cerita dan misteri.
+              </p>
+              <a
+                href="/re"
+                class="inline-flex items-center gap-2 bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white text-sm font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-sky-500/30 transition-all duration-300 transform hover:scale-105"
+              >
+                <span>Lihat Detail</span>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="group bg-slate-800/90 backdrop-blur-sm rounded-2xl overflow-hidden card-glow hover:card-hover transition-all duration-500 gradient-border p-0.5">
+          <div class="bg-slate-800 rounded-2xl overflow-hidden h-full">
+            <div class="relative overflow-hidden">
+              <img
+                src="/static/gif/lol.gif"
+                alt="League of Legends"
+                class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-800 via-transparent to-transparent"></div>
+              <div class="absolute top-4 right-4 bg-purple-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                eSports
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-bold text-sky-400 mb-2 group-hover:text-sky-300 transition-colors">League of Legends</h3>
+              <p class="text-sm text-gray-300 mb-4 leading-relaxed">
+                Game MOBA legendaris dari Riot Games dengan gameplay strategis dan kompetitif.
+              </p>
+              <a
+                href="/lol"
+                class="inline-flex items-center gap-2 bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white text-sm font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-sky-500/30 transition-all duration-300 transform hover:scale-105"
+              >
+                <span>Lihat Detail</span>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="group bg-slate-800/90 backdrop-blur-sm rounded-2xl overflow-hidden card-glow hover:card-hover transition-all duration-500 gradient-border p-0.5">
+          <div class="bg-slate-800 rounded-2xl overflow-hidden h-full">
+            <div class="relative overflow-hidden">
+              <img
+                src="/static/gif/freefire.gif"
+                alt="Free Fire"
+                class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-800 via-transparent to-transparent"></div>
+              <div class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                Mobile
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-bold text-sky-400 mb-2 group-hover:text-sky-300 transition-colors">Free Fire</h3>
+              <p class="text-sm text-gray-300 mb-4 leading-relaxed">
+                Game battle royale cepat dan ringan dengan berbagai mode seru untuk dimainkan.
+              </p>
+              <a
+                href="/freefire"
+                class="inline-flex items-center gap-2 bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white text-sm font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-sky-500/30 transition-all duration-300 transform hover:scale-105"
+              >
+                <span>Lihat Detail</span>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="group bg-slate-800/90 backdrop-blur-sm rounded-2xl overflow-hidden card-glow hover:card-hover transition-all duration-500 gradient-border p-0.5">
+          <div class="bg-slate-800 rounded-2xl overflow-hidden h-full">
+            <div class="relative overflow-hidden">
+              <img
+                src="/static/gif/valorant.gif"
+                alt="Valorant"
+                class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-800 via-transparent to-transparent"></div>
+              <div class="absolute top-4 right-4 bg-cyan-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                FPS
+              </div>
+            </div>
+            <div class="p-6">
+              <h3 class="text-xl font-bold text-sky-400 mb-2 group-hover:text-sky-300 transition-colors">Valorant</h3>
+              <p class="text-sm text-gray-300 mb-4 leading-relaxed">
+                Game FPS taktis dengan elemen hero shooter dan strategi tim.
+              </p>
+              <a
+                href="/valorant"
+                class="inline-flex items-center gap-2 bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white text-sm font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-sky-500/30 transition-all duration-300 transform hover:scale-105"
+              >
+                <span>Lihat Detail</span>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../static/js/navbar.js"></script>
+    <script>autoInjectNavbar();</script>
+    <script>
+      function updateMobileLegendsData() {
+        fetch("/static/data/data.json")
+          .then((response) => response.json())
+          .then((data) => {
+            const ml = data.mobile_legends;
+            document.getElementById("ml-title").textContent = ml.title;
+            document.getElementById("ml-desc").textContent = ml.description;
+            document.getElementById("ml-image").src = ml.image;
+            document.getElementById("ml-link").href = ml.link;
+          })
+          .catch((error) =>
+            console.error("Gagal memuat data Mobile Legends:", error)
+          );
+      }
+
+      updateMobileLegendsData();
+      setInterval(updateMobileLegendsData, 15000);
+    </script>
   </body>
 </html>

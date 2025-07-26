@@ -1,4 +1,3 @@
-<!-- templates/re.html -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -9,12 +8,33 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/style.css') }}"
-    />
+    <style>
+      body {
+        background-color: #0f172a;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-image: url("/static/image/reee.png"); /* Ganti sesuai file */
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        position: relative;
+        color: white;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(15, 23, 42, 0.85);
+        z-index: -1;
+      }
+    </style>
   </head>
-  <body style="background-color: #0f172a; color: white">
+  <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container-fluid">
         <a class="navbar-brand" href="/">🎮 GameTrend</a>
@@ -25,10 +45,20 @@
       <div class="row g-4">
         <div class="col-md-6">
           <img
-            src="{{ url_for('static', filename='image/re.jpg') }}"
+            src="/static/image/alan.png"
             alt="Resident Evil"
             class="img-fluid rounded shadow"
           />
+          <div class="mt-4">
+            <h5>Gameplay Resident Evil</h5>
+            <div class="ratio ratio-16x9 rounded shadow">
+              <iframe
+                src="https://www.youtube.com/embed/Id2EaldBaWw?autoplay=1&mute=1"
+                title="Resident Evil Gameplay"
+                allowfullscreen
+              ></iframe>
+            </div>
+          </div>
         </div>
         <div class="col-md-6">
           <h2 class="mb-3">Resident Evil</h2>
@@ -45,11 +75,33 @@
             <li><strong>Mode:</strong> Single Player</li>
           </ul>
           <p>
-            Sejak tahun 1996, Resident Evil telah menjadi salah satu waralaba
-            game horror paling sukses, dengan banyak seri dan adaptasi film
-            serta remake modern.
+            Sejak 1996, Resident Evil telah menjadi salah satu franchise horror
+            paling ikonik dengan banyak seri, remake, dan adaptasi ke film dan
+            televisi.
           </p>
-          <a href="/" class="btn btn-primary mt-3">← Kembali ke Dashboard</a>
+
+          <div class="mt-4">
+            <h5>Cara Download Resident Evil</h5>
+            <ol>
+              <li>
+                Buka platform seperti <strong>Steam</strong>,
+                <strong>PlayStation Store</strong>, atau
+                <strong>Xbox Store</strong>.
+              </li>
+              <li>
+                Ketik "<strong>Resident Evil</strong>" di kolom pencarian.
+              </li>
+              <li>
+                Pilih versi game yang diinginkan (RE 2 Remake, Village, RE4,
+                dll).
+              </li>
+              <li>
+                Tekan tombol <strong>Beli</strong> atau <strong>Unduh</strong>.
+              </li>
+              <li>Tunggu hingga selesai, lalu jalankan gamenya.</li>
+            </ol>
+            <a href="/" class="btn btn-primary mt-3">← Kembali ke Dashboard</a>
+          </div>
         </div>
       </div>
     </div>

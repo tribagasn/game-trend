@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Trending Gaming | GameTrend</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 100vw;
+        background: rgba(15, 23, 42, 0.85);
+        z-index: -1;
+      }
+      
+      .card-glow {
+        box-shadow: 0 0 20px rgba(56, 189, 248, 0.1);
+      }
+      
+      .card-hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(56, 189, 248, 0.3);
+      }
+      
+      .gradient-border {
+        background: linear-gradient(45deg, transparent, rgba(56, 189, 248, 0.3), transparent);
+        background-size: 400% 400%;
+        animation: gradient-move 3s ease infinite;
+      }
+      
+      @keyframes gradient-move {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+      }
+    </style>
+  </head>
+  <body
+    class="bg-slate-900 bg-fixed bg-cover bg-center text-white"
+    style="background-image: url('/static/image/gamers.png')"
+  >
+    <div id="navbar-container"></div>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+      <h1 class="text-center text-3xl font-semibold text-white mt-8 mb-8">
+        🎮 Video Trending YouTube - Gaming
+      </h1>
+
+      <div class="max-w-2xl mx-auto mb-8">
+        <div class="bg-slate-800/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-slate-700/50 text-center">
+          <p class="text-gray-300 mb-6">
+            Discover the latest trending gaming videos on YouTube and stay updated with the hottest gaming content
+          </p>
+          
+          <button
+            id="generateBtn"
+            class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 transform hover:scale-105 flex items-center gap-2 mx-auto"
+          >
+            <span>🔍</span>
+            <span>Tampilkan Video Trending</span>
+          </button>
+
+          <div 
+            id="loading" 
+            class="hidden mt-6 text-yellow-400 font-medium animate-pulse"
+          >
+            <div class="flex items-center justify-center gap-2">
+              <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-yellow-400"></div>
+              <span>⏳ Memuat video trending...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        id="videoContainer"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8"
+      ></div>
+    </div>
+
+    <script src="../static/js/navbar.js"></script>
+    <script>autoInjectNavbar();</script>
+    <script>
+      document.getElementById("generateBtn").addEventListener("click", () => {
+        const container = document.getElementById("videoContainer");
+        const loading = document.getElementById("loading");
+        container.innerHTML = "";
+        loading.classList.remove("hidden");
+
+        fetch("/trending_games")
+          .then((res) => res.json())
+          .then((data) => {
+            loading.classList.add("hidden");
+
+            if (!data.videos || data.videos.length === 0) {
+              container.innerHTML = `
+                <div class="col-span-full text-center py-12">
+                  <div class="bg-slate-800/90 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50">
+                    <p class="text-red-400 text-lg font-medium">❌ Tidak ada video ditemukan</p>
+                    <p class="text-gray-400 text-sm mt-2">Silakan coba lagi nanti</p>
+                  </div>
+                </div>
+              `;
+              return;
+            }
+
+            data.videos.forEach((video) => {
+              const videoCard = document.createElement("div");
+              videoCard.className = "group bg-slate-800/90 backdrop-blur-sm rounded-2xl overflow-hidden card-glow hover:card-hover transition-all duration-500 gradient-border p-0.5";
+
+              videoCard.innerHTML = `
+                <div class="bg-slate-800 rounded-2xl overflow-hidden h-full">
+                  <div class="relative overflow-hidden">
+                    <a href="${video.url}" target="_blank" class="block">
+                      <img 
+                        src="${video.thumbnail}" 
+                        alt="${video.title}" 
+                        class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+                        loading="lazy"
+                      >
+                    </a>
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-800 via-transparent to-transparent"></div>
+                    <div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                      🔥 Trending
+                    </div>
+                    <div class="absolute bottom-4 right-4 bg-black/70 text-white px-2 py-1 rounded text-xs">
+                      ▶️ YouTube
+                    </div>
+                  </div>
+                  <div class="p-6">
+                    <h3 class="text-lg font-bold text-sky-400 mb-2 group-hover:text-sky-300 transition-colors line-clamp-2 leading-tight">
+                      ${video.title}
+                    </h3>
+                    <div class="flex items-center gap-2 text-sm text-gray-300 mb-4">
+                      <span class="text-sky-400">👤</span>
+                      <span class="truncate">${video.channel}</span>
+                    </div>
+                    <a
+                      href="${video.url}"
+                      target="_blank"
+                      class="inline-flex items-center gap-2 bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white text-sm font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-sky-500/30 transition-all duration-300 transform hover:scale-105 w-full justify-center"
+                    >
+                      <span>Tonton Video</span>
+                      <span>↗</span>
+                    </a>
+                  </div>
+                </div>
+              `;
+
+              container.appendChild(videoCard);
+            });
+          })
+          .catch((err) => {
+            console.error("Gagal memuat video:", err);
+            loading.classList.add("hidden");
+            container.innerHTML = `
+              <div class="col-span-full text-center py-12">
+                <div class="bg-slate-800/90 backdrop-blur-sm rounded-2xl p-8 border border-slate-700/50">
+                  <p class="text-red-400 text-lg font-medium">⚠️ Terjadi kesalahan</p>
+                  <p class="text-gray-400 text-sm mt-2">Tidak dapat mengambil data video trending</p>
+                  <button 
+                    onclick="document.getElementById('generateBtn').click()"
+                    class="mt-4 bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white text-sm font-semibold px-6 py-2 rounded-xl transition-all duration-300"
+                  >
+                    🔄 Coba Lagi
+                  </button>
+                </div>
+              </div>
+            `;
+          });
+      });
+    </script>
+  </body>
+</html>

@@ -4,6 +4,30 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Detail Mobile Legends</title>
+    <style>
+      body {
+        background-color: #0f172a;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-image: url("/static/image/background_ml.png");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        position: relative;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(15, 23, 42, 0.85);
+        z-index: -1;
+      }
+    </style>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -32,13 +56,28 @@
     <!-- Konten Detail -->
     <div class="container my-5">
       <div class="row g-4">
+        <!-- Kolom Kiri -->
         <div class="col-md-6">
           <img
-            src="{{ url_for('static', filename='image/mobile_legends.jpg') }}"
+            src="{{ url_for('static', filename='image/lunox.png') }}"
             alt="Mobile Legends"
-            class="img-fluid rounded shadow"
+            class="img-fluid rounded shadow mb-3"
           />
+
+          <!-- Video di bawah gambar -->
+          <div class="mt-4">
+            <h5>Gameplay Mobile Legends</h5>
+            <div class="ratio ratio-16x9 rounded shadow">
+              <iframe
+                src="https://www.youtube.com/embed/cftqT7au9gk?autoplay=1&mute=1"
+                title="Mobile Legends Gameplay"
+                allowfullscreen
+              ></iframe>
+            </div>
+          </div>
         </div>
+
+        <!-- Kolom Kanan -->
         <div class="col-md-6">
           <h2 class="mb-3">Mobile Legends: Bang Bang</h2>
           <p>
@@ -60,12 +99,44 @@
             (Mobile Legends Professional League), menjadikannya salah satu
             e-sport mobile terdepan.
           </p>
-          <a href="/" class="btn btn-primary mt-3">← Kembali ke Dashboard</a>
+
+          <!-- Panduan Download -->
+          <div class="mt-4">
+            <h5>Cara Download Mobile Legends</h5>
+            <ol>
+              <li>
+                Buka aplikasi <strong>Google Play Store</strong> (Android) atau
+                <strong>App Store</strong> (iOS).
+              </li>
+              <li>
+                Ketik "<strong>Mobile Legends: Bang Bang</strong>" di kolom
+                pencarian.
+              </li>
+              <li>Pilih aplikasi resmi dari <strong>Moonton</strong>.</li>
+              <li>Tekan tombol <strong>Install</strong>.</li>
+              <li>Tunggu hingga proses selesai, lalu buka aplikasinya.</li>
+            </ol>
+            <a href="/" class="btn btn-primary mt-3">← Kembali ke Dashboard</a>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Script -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    >
+           async function loadMLData() {
+        const res = await fetch("/api/ml");
+        const data = await res.json();
+
+        document.getElementById("ml-title").textContent = data.title;
+        document.getElementById("ml-description").textContent = data.description;
+        document.getElementById("ml-img").src = data.image;
+        document.getElementById("ml-link").href = data.link;
+      }
+
+      loadMLData();
+    </script>
   </body>
 </html>

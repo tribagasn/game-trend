@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pencarian Statistik Game | GameTrend</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 100vw;
+        background: rgba(15, 23, 42, 0.85);
+        z-index: -1;
+      }
+      
+      .card-glow {
+        box-shadow: 0 0 20px rgba(56, 189, 248, 0.1);
+      }
+      
+      .gradient-border {
+        background: linear-gradient(45deg, transparent, rgba(56, 189, 248, 0.3), transparent);
+        background-size: 400% 400%;
+        animation: gradient-move 3s ease infinite;
+      }
+      
+      @keyframes gradient-move {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+      }
+    </style>
+  </head>
+  <body
+    class="bg-slate-900 bg-fixed bg-cover bg-center text-white"
+    style="background-image: url('/static/image/gamers.png')"
+  >
+    <div id="navbar-container"></div>
+
+    <div class="max-w-6xl mx-auto px-4 py-8">
+      <h1 class="text-center text-3xl font-semibold text-white mt-8 mb-8">
+        📊 Pencarian Statistik Game
+      </h1>
+
+      <div class="max-w-2xl mx-auto mb-8">
+        <div class="bg-slate-800/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-slate-700/50">
+          <div class="text-center mb-6">
+            <p class="text-gray-300 mb-4">
+              Search and compare Google Trends data for your favorite games
+            </p>
+          </div>
+          
+          <div class="flex flex-col sm:flex-row gap-4">
+            <input
+              id="gameInput"
+              type="text"
+              placeholder="Masukkan nama game..."
+              class="flex-1 bg-slate-700 border border-slate-600 text-white text-sm rounded-xl px-4 py-3 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors placeholder-gray-400"
+            />
+            <button
+              id="generateBtn"
+              class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-semibold px-8 py-3 rounded-xl shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 transform hover:scale-105 flex items-center gap-2 justify-center"
+            >
+              <span>📈</span>
+              <span>Generate</span>
+            </button>
+          </div>
+
+          <div id="message" class="text-center mt-4 font-medium"></div>
+          
+          <div
+            id="infoMessage"
+            class="text-center mt-4 text-sky-300 text-sm italic bg-sky-500/10 border border-sky-500/30 rounded-xl p-3"
+          >
+            💡 Kamu bisa menambahkan game lain ke grafik untuk dibandingkan.
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-8">
+        <div id="chartContainer" class="bg-white/98 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border border-sky-200/50 hidden">
+          <canvas id="chart" class="w-full h-auto"></canvas>
+        </div>
+      </div>
+
+      <div id="gamesList" class="hidden">
+        <div class="bg-slate-800/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-slate-700/50">
+          <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <span>🎮</span>
+            Games Added to Comparison
+          </h3>
+          <div id="gamesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+          <div class="mt-6 text-center">
+            <button
+              id="clearBtn"
+              class="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-red-500/30 transition-all duration-300 transform hover:scale-105 flex items-center gap-2 mx-auto"
+            >
+              <span>🗑️</span>
+              <span>Clear All</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../static/js/navbar.js"></script>
+    <script>autoInjectNavbar();</script>
+
+    <script>
+      const btn = document.getElementById("generateBtn");
+      const input = document.getElementById("gameInput");
+      const chartCanvas = document.getElementById("chart");
+      const chartContainer = document.getElementById("chartContainer");
+      const message = document.getElementById("message");
+      const gamesList = document.getElementById("gamesList");
+      const gamesGrid = document.getElementById("gamesGrid");
+      const clearBtn = document.getElementById("clearBtn");
+      
+      let chart = null;
+      const datasets = [];
+      const gameColors = {};
+      
+      const colors = [
+        "#ef4444", // red
+        "#10b981", // emerald
+        "#f59e0b", // amber
+        "#8b5cf6", // violet
+        "#f97316", // orange
+        "#06b6d4", // cyan
+        "#3b82f6", // blue
+        "#84cc16", // lime
+      ];
+      let colorIndex = 0;
+
+      function showMessage(text, type = 'info') {
+        message.textContent = text;
+        message.className = `text-center mt-4 font-medium ${
+          type === 'success' ? 'text-green-400' :
+          type === 'error' ? 'text-red-400' :
+          type === 'warning' ? 'text-yellow-400' :
+          'text-sky-400'
+        }`;
+      }
+
+      function updateGamesList() {
+        if (datasets.length === 0) {
+          gamesList.classList.add('hidden');
+          return;
+        }
+
+        gamesList.classList.remove('hidden');
+        gamesGrid.innerHTML = '';
+
+        datasets.forEach((dataset, index) => {
+          const gameCard = document.createElement('div');
+          gameCard.className = 'bg-slate-700/50 rounded-xl p-4 border border-slate-600/50';
+          
+          const gameName = dataset.label.replace('Skor Tren: ', '');
+          
+          gameCard.innerHTML = `
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-4 h-4 rounded-full" style="background-color: ${dataset.borderColor}"></div>
+                <span class="text-white font-medium">${gameName}</span>
+              </div>
+              <button 
+                onclick="removeGame(${index})"
+                class="text-red-400 hover:text-red-300 transition-colors p-1 rounded hover:bg-red-500/20"
+                title="Remove game"
+              >
+                ❌
+              </button>
+            </div>
+          `;
+          
+          gamesGrid.appendChild(gameCard);
+        });
+      }
+
+      function removeGame(index) {
+        datasets.splice(index, 1);
+        colorIndex = datasets.length;
+        
+        if (chart) {
+          if (datasets.length === 0) {
+            chart.destroy();
+            chart = null;
+            chartContainer.classList.add('hidden');
+          } else {
+            chart.data.datasets = datasets;
+            chart.update();
+          }
+        }
+        
+        updateGamesList();
+        showMessage(datasets.length === 0 ? 'All games removed' : 'Game removed from comparison', 'info');
+      }
+
+      function clearAllGames() {
+        datasets.length = 0;
+        colorIndex = 0;
+        
+        if (chart) {
+          chart.destroy();
+          chart = null;
+        }
+        
+        chartContainer.classList.add('hidden');
+        updateGamesList();
+        showMessage('All games cleared', 'info');
+      }
+
+      btn.addEventListener("click", () => {
+        const game = input.value.trim();
+        if (!game) {
+          showMessage("⚠️ Mohon masukkan nama game.", 'warning');
+          return;
+        }
+
+        const alreadyAdded = datasets.some((d) => d.label.includes(game));
+        if (alreadyAdded) {
+          showMessage(`⚠️ Game "${game}" sudah ditambahkan.`, 'warning');
+          return;
+        }
+
+        showMessage("🔄 Mengambil data...", 'info');
+        
+        fetch(`/search_game?game=${encodeURIComponent(game)}`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (!data.labels || data.labels.length === 0) {
+              showMessage(`❌ Tidak ada data tren untuk game: "${data.game}".`, 'error');
+              return;
+            }
+
+            const color = colors[colorIndex % colors.length];
+            colorIndex++;
+
+            datasets.push({
+              label: `Skor Tren: ${data.game}`,
+              data: data.scores,
+              borderColor: color,
+              backgroundColor: color + "30",
+              fill: false,
+              tension: 0.4,
+              pointRadius: 4,
+              pointHoverRadius: 7,
+              borderWidth: 3,
+              pointBackgroundColor: color,
+              pointBorderColor: "#ffffff",
+              pointBorderWidth: 2,
+              pointHoverBackgroundColor: color,
+              pointHoverBorderColor: "#ffffff",
+              pointHoverBorderWidth: 3,
+            });
+
+            if (!chart) {
+              chart = new Chart(chartCanvas.getContext("2d"), {
+                type: "line",
+                data: {
+                  labels: data.labels,
+                  datasets: datasets,
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: { 
+                      position: "top",
+                      labels: {
+                        font: { size: 14, weight: 'bold' },
+                        padding: 25,
+                        color: '#FFFFFF',
+                        usePointStyle: true,
+                        pointStyle: 'circle'
+                      }
+                    },
+                    title: {
+                      display: true,
+                      text: "📈 Popularitas Google Trends",
+                      font: { size: 18, weight: 'bold' },
+                      padding: 25,
+                      color: '#FFFFFF'
+                    },
+                    tooltip: {
+                      backgroundColor: 'rgba(30, 41, 59, 0.95)',
+                      titleColor: '#38bdf8',
+                      bodyColor: '#ffffff',
+                      borderColor: '#38bdf8',
+                      borderWidth: 2,
+                      cornerRadius: 12,
+                      displayColors: true,
+                      usePointStyle: true
+                    }
+                  },
+                  scales: {
+                    x: {
+                      title: { 
+                        display: true, 
+                        text: "📅 Tanggal",
+                        font: { weight: 'bold', size: 14 },
+                        color: '#FFFFFF'
+                      },
+                      ticks: {
+                        color: '#64748b',
+                        font: { size: 12 }
+                      },
+                      grid: {
+                        color: '#e2e8f0',
+                        lineWidth: 1
+                      }
+                    },
+                    y: {
+                      beginAtZero: true,
+                      title: { 
+                        display: true, 
+                        text: "📊 Popularitas (0-100)",
+                        font: { weight: 'bold', size: 14 },
+                        color: '#1e293b'
+                      },
+                      ticks: {
+                        color: '#64748b',
+                        font: { size: 12 }
+                      },
+                      grid: {
+                        color: '#e2e8f0',
+                        lineWidth: 1
+                      }
+                    },
+                  },
+                  interaction: {
+                    intersect: false,
+                    mode: 'index'
+                  }
+                },
+              });
+              
+              chartCanvas.style.height = "400px";
+              chartContainer.classList.remove("hidden");
+            } else {
+              chart.data.datasets = datasets;
+              chart.update();
+            }
+
+            showMessage(`✅ Data "${data.game}" berhasil ditambahkan!`, 'success');
+            updateGamesList();
+            input.value = "";
+          })
+          .catch((err) => {
+            console.error(err);
+            showMessage("🚨 Terjadi kesalahan mengambil data.", 'error');
+          });
+      });
+
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          btn.click();
+        }
+      });
+
+      clearBtn.addEventListener('click', clearAllGames);
+    </script>
+  </body>
+</html>

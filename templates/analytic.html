@@ -1,47 +1,347 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Analystic Game</title>
-
-    <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/style.css') }}"
-    />
+    <title>Analitik Tren Game | GameTrend</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 100vw;
+        background: rgba(15, 23, 42, 0.85);
+        z-index: -1;
+      }
+    </style>
   </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">🎮 GameTrend</a>
-        <div class="collapse navbar-collapse">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="/">Dashboard</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="/analytic">Analystic</a>
-            </li>
-          </ul>
+  <body
+    class="bg-slate-900 bg-fixed bg-cover bg-center text-white"
+    style="background-image: url('/static/image/gamers.png')"
+  >
+    <div id="navbar-container"></div>
+
+    <h1 class="text-center text-3xl font-semibold text-white mt-8 mb-8">
+      📊 Analisis Google Trends 6 Game
+    </h1>
+
+    <div class="max-w-4xl mx-auto px-4 mb-8">
+      <div class="bg-slate-800/90 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-slate-700/50">
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div class="flex items-center gap-3">
+            <label for="range" class="text-sm font-medium text-gray-300">
+              📅 Periode:
+            </label>
+            <select 
+              id="range"
+              class="bg-slate-700 border border-slate-600 text-white text-sm rounded-xl px-4 py-2 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition-colors"
+            >
+              <option value="1">24 Jam</option>
+              <option value="7">7 Hari</option>
+            </select>
+          </div>
+
+          <button 
+            id="generate"
+            class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-semibold px-6 py-2 rounded-xl shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
+          >
+            <span>📈</span>
+            <span>Tampilkan Grafik</span>
+          </button>
+        </div>
+
+        <div 
+          id="loading" 
+          class="hidden mt-4 text-center text-yellow-400 font-medium animate-pulse"
+        >
+          <div class="flex items-center justify-center gap-2">
+            <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-yellow-400"></div>
+            <span>⏳ Sedang memproses, mohon tunggu...</span>
+          </div>
         </div>
       </div>
-    </nav>
-
-    <div class="container my-5 text-center">
-      <h1 class="mb-4 text-white">Analisa Tren Game</h1>
-      <img
-        src="{{ url_for('static', filename='image/trend_game_data.png') }}"
-        class="img-fluid"
-        alt="Trend Game Graph"
-      />
     </div>
 
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="max-w-7xl mx-auto px-4 mb-8">
+      <div class="bg-white/98 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border border-sky-200/50 hidden" id="chartContainer">
+        <canvas id="trendChart" class="w-full h-auto"></canvas>
+      </div>
+    </div>
+
+    <div 
+      id="trendDescription" 
+      class="max-w-4xl mx-auto px-4 mb-8 hidden"
+    >
+      <div class="bg-gradient-to-br from-slate-800/95 to-slate-900/95 backdrop-blur-sm rounded-2xl p-6 shadow-xl border border-slate-700/50">
+        <div class="prose prose-invert max-w-none">
+        </div>
+      </div>
+    </div>
+
+    <div class="h-16"></div>
+
+    <script src="../static/js/navbar.js"></script>
+    <script>autoInjectNavbar();</script>
+
+    <script>
+      let chart = null;
+
+      function formatTimestamp(rawTime) {
+        const d = new Date(rawTime);
+        const pad = (n) => n.toString().padStart(2, "0");
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(
+          d.getDate()
+        )} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      }
+
+      function showLoading(show) {
+        document.getElementById("loading").style.display = show ? "block" : "none";
+      }
+
+      function calculateTrendDirection(dataPoints) {
+        const cleaned = dataPoints.filter((v) => v !== null && v !== 0);
+        if (cleaned.length < 2) return "stabil";
+
+        const first = dataPoints.find((v) => v !== null && v !== 0);
+        const last = [...dataPoints]
+          .reverse()
+          .find((v) => v !== null && v !== 0);
+
+        if (first === undefined || last === undefined) return "stabil";
+
+        const changePercent = ((last - first) / first) * 100;
+
+        if (changePercent <= -50) return "turun";
+        if (changePercent >= 50) return "naik";
+        return "stabil";
+      }
+
+      function updateTrendDescription(data) {
+        const trendGroups = { naik: [], stabil: [], turun: [] };
+
+        for (let game in data) {
+          const points = data[game].map((item) => item.score);
+          const trend = calculateTrendDirection(points);
+          trendGroups[trend].push(game);
+        }
+
+        const description = [];
+
+        if (trendGroups.naik.length)
+          description.push(
+            `<div class="flex items-start gap-3 mb-3">
+              <span class="text-green-400 text-xl">📈</span>
+              <div>
+                <span class="text-green-400 font-semibold">Sedang naik daun:</span>
+                <span class="text-gray-200"> ${trendGroups.naik.join(", ")}</span>
+              </div>
+            </div>`
+          );
+        
+        if (trendGroups.stabil.length)
+          description.push(
+            `<div class="flex items-start gap-3 mb-3">
+              <span class="text-blue-400 text-xl">⚖️</span>
+              <div>
+                <span class="text-blue-400 font-semibold">Stabil:</span>
+                <span class="text-gray-200"> ${trendGroups.stabil.join(", ")}</span>
+              </div>
+            </div>`
+          );
+        
+        if (trendGroups.turun.length)
+          description.push(
+            `<div class="flex items-start gap-3 mb-3">
+              <span class="text-red-400 text-xl">📉</span>
+              <div>
+                <span class="text-red-400 font-semibold">Sedang menurun:</span>
+                <span class="text-gray-200"> ${trendGroups.turun.join(", ")}</span>
+              </div>
+            </div>`
+          );
+
+        const container = document.getElementById("trendDescription");
+        container.innerHTML = `
+          <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <span class="text-2xl">📊</span>
+            Rangkuman Tren Game
+          </h3>
+          <div class="space-y-2">
+            ${description.join("")}
+          </div>
+        `;
+        container.classList.remove("hidden");
+      }
+
+      document.getElementById("generate").addEventListener("click", () => {
+        showLoading(true);
+        const range = document.getElementById("range").value;
+
+        fetch(`/get_trend_data?range=${range}`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (chart !== null) chart.destroy();
+
+            const allTimestamps = new Set();
+            for (let game in data) {
+              data[game].forEach((item) => {
+                const label = formatTimestamp(item.time);
+                allTimestamps.add(label);
+              });
+            }
+
+            const labels = Array.from(allTimestamps).sort();
+
+            const colors = [
+              "#ef4444",
+              "#10b981", 
+              "#f59e0b",
+              "#8b5cf6",
+              "#f97316",
+              "#06b6d4",
+            ];
+            
+            const datasets = [];
+            let index = 0;
+
+            for (let game in data) {
+              const scoreMap = {};
+              data[game].forEach((item) => {
+                const label = formatTimestamp(item.time);
+                scoreMap[label] = item.score;
+              });
+
+              const scores = labels.map((label) =>
+                scoreMap[label] !== undefined ? scoreMap[label] : null
+              );
+
+              datasets.push({
+                label: game,
+                data: scores,
+                borderColor: colors[index % colors.length],
+                backgroundColor: colors[index % colors.length] + "20",
+                fill: false,
+                tension: 0.4,
+                pointRadius: 4,
+                pointHoverRadius: 7,
+                borderWidth: 3,
+                pointBackgroundColor: colors[index % colors.length],
+                pointBorderColor: "#ffffff",
+                pointBorderWidth: 2,
+                pointHoverBackgroundColor: colors[index % colors.length],
+                pointHoverBorderColor: "#ffffff",
+                pointHoverBorderWidth: 3,
+              });
+              index++;
+            }
+
+            const ctx = document.getElementById("trendChart").getContext("2d");
+            chart = new Chart(ctx, {
+              type: "line",
+              data: {
+                labels: labels,
+                datasets: datasets,
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: { 
+                    position: "top",
+                    labels: {
+                      font: { size: 14, weight: 'bold' },
+                      padding: 25,
+                      color: '#FFFFFF',
+                      usePointStyle: true,
+                      pointStyle: 'circle'
+                    }
+                  },
+                  title: {
+                    display: true,
+                    text: "📈 Perbandingan Tren Game (Google Trends)",
+                    font: { size: 18, weight: 'bold' },
+                    padding: 25,
+                    color: '#FFFFFF'
+                  },
+                  tooltip: {
+                    backgroundColor: 'rgba(30, 41, 59, 0.95)',
+                    titleColor: '#FFFFFF',
+                    bodyColor: '#ffffff',
+                    borderColor: '#38bdf8',
+                    borderWidth: 2,
+                    cornerRadius: 12,
+                    displayColors: true,
+                    usePointStyle: true
+                  }
+                },
+                scales: {
+                  x: {
+                    title: { 
+                      display: true, 
+                      text: "⏰ Waktu",
+                      font: { weight: 'bold', size: 14 },
+                      color: '#FFFFFF'
+                    },
+                    ticks: {
+                      maxRotation: 45,
+                      minRotation: 45,
+                      autoSkip: true,
+                      maxTicksLimit: 30,
+                      color: '#64748b',
+                      font: { size: 12 }
+                    },
+                    grid: {
+                      color: '#e2e8f0',
+                      lineWidth: 1
+                    }
+                  },
+                  y: {
+                    title: { 
+                      display: true, 
+                      text: "📊 Skor Tren",
+                      font: { weight: 'bold', size: 14 },
+                      color: '#FFFFFF'
+                    },
+                    beginAtZero: true,
+                    ticks: {
+                      color: '#64748b',
+                      font: { size: 12 }
+                    },
+                    grid: {
+                      color: '#e2e8f0',
+                      lineWidth: 1
+                    }
+                  },
+                },
+                interaction: {
+                  intersect: false,
+                  mode: 'index'
+                },
+                elements: {
+                  line: {
+                    capBezierPoints: false
+                  }
+                }
+              },
+            });
+
+            document.getElementById("trendChart").style.height = "400px";
+            document.getElementById("chartContainer").classList.remove("hidden");
+
+            updateTrendDescription(data);
+          })
+          .catch((err) => {
+            console.error("Gagal mengambil data:", err);
+            alert("❌ Gagal mengambil data tren. Silakan coba lagi.");
+          })
+          .finally(() => {
+            showLoading(false);
+          });
+      });
+    </script>
   </body>
 </html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detail League of Legends</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #0f172a;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-image: url("/static/image/background_lol.png"); /* Ganti sesuai file */
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        position: relative;
+        color: white;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(15, 23, 42, 0.85);
+        z-index: -1;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">🎮 GameTrend</a>
+      </div>
+    </nav>
+
+    <div class="container my-5">
+      <div class="row g-4">
+        <div class="col-md-6">
+          <img
+            src="/static/image/front_lol.png"
+            alt="League of Legends"
+            class="img-fluid rounded shadow"
+          />
+          <div class="mt-4">
+            <h5>Gameplay League of Legends</h5>
+            <div class="ratio ratio-16x9 rounded shadow">
+              <iframe
+                src="https://www.youtube.com/embed/BGtROJeMPeE?autoplay=1&mute=1"
+                title="League of Legends Gameplay"
+                allowfullscreen
+              ></iframe>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <h2 class="mb-3">League of Legends</h2>
+          <p>
+            League of Legends adalah game MOBA (Multiplayer Online Battle Arena)
+            yang mempertemukan dua tim berisi 5 pemain dalam pertarungan
+            strategi dan keterampilan. Tujuannya adalah menghancurkan markas
+            musuh yang disebut Nexus.
+          </p>
+          <ul>
+            <li><strong>Genre:</strong> MOBA</li>
+            <li><strong>Developer:</strong> Riot Games</li>
+            <li><strong>Platform:</strong> PC (Windows, macOS)</li>
+            <li><strong>Mode:</strong> Online Multiplayer</li>
+          </ul>
+          <p>
+            League of Legends telah menjadi salah satu eSport terbesar di dunia
+            dengan turnamen global seperti World Championship dan komunitas
+            aktif di seluruh dunia.
+          </p>
+
+          <div class="mt-4">
+            <h5>Cara Download League of Legends</h5>
+            <ol>
+              <li>
+                Kunjungi situs resmi:
+                <a
+                  href="https://www.leagueoflegends.com"
+                  target="_blank"
+                  style="color: #0ea5e9"
+                  >leagueoflegends.com</a
+                >
+              </li>
+              <li>Klik tombol <strong>Play for Free</strong>.</li>
+              <li>Buat akun Riot Games atau login jika sudah punya.</li>
+              <li>Unduh launcher League of Legends untuk PC.</li>
+              <li>Install dan jalankan game dari launcher tersebut.</li>
+            </ol>
+            <a href="/" class="btn btn-primary mt-3">← Kembali ke Dashboard</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
