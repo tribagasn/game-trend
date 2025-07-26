@@ -16,9 +16,6 @@ app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 GAMES = ["Mobile Legends", "PUBG", "Free Fire", "Resident Evil", "League of Legends", "Valorant"]
 
-@app.route('/')
-def home():
-    return '🚀 Flask App Running on Vercel!'
 
 @app.route('/')
 def dashboard():
@@ -214,10 +211,6 @@ def search_game():
         "scores": data[game].tolist(),
         "game": game
     })
-
-# Ini penting untuk Vercel:
-def handler(event, context):
-    return serverless_wsgi.handle_request(app, event, context)
 
 if __name__ == '__main__':
     app.run(debug=True)
