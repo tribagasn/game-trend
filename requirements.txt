@@ -1,0 +1,5 @@
+Flask
+pytrends
+serverless-wsgi
+requests
+pandas
