@@ -1,4 +1,4 @@
-from flask import Flask, render_template,request, jsonify
+from flask import Flask, render_template, request, jsonify
 from pytrends.request import TrendReq
 from datetime import datetime
 import pandas as pd
@@ -6,16 +6,22 @@ import time
 from pytrends.exceptions import ResponseError  
 import random
 import requests
+import os
 
-app = Flask(__name__)
-pytrends = TrendReq(hl='id-ID', tz=360)
-API_KEY = "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"
-YOUTUBE_API_KEY = "AIzaSyDrwRrCYfhev87uSzwDxR3LRq1I0rQtwIw"
+app = Flask(_name_)
+
+# Konfigurasi untuk production
+if os.environ.get('VERCEL'):
+    app.config['TEMPLATES_AUTO_RELOAD'] = False
+else:
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
+
+# API Keys - gunakan environment variables untuk production
+API_KEY = os.environ.get('DEEPSEEK_API_KEY', "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")
+YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY', "AIzaSyDrwRrCYfhev87uSzwDxR3LRq1I0rQtwIw")
 DEEPSEEK_ENDPOINT = "https://api.deepseek.com/v1/chat/completions"
-app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 GAMES = ["Mobile Legends", "PUBG", "Free Fire", "Resident Evil", "League of Legends", "Valorant"]
-
 
 @app.route('/')
 def dashboard():
@@ -59,48 +65,50 @@ def valorant_detail():
 
 @app.route('/get_trend_data')
 def get_trend_data():
-    pytrends = TrendReq(hl='en-US', tz=360)
+    try:
+        pytrends = TrendReq(hl='en-US', tz=360, timeout=(10,25), retries=2, backoff_factor=0.1)
 
-    keywords_batch1 = ["Mobile Legends", "PUBG", "Free Fire", "Resident Evil", "League Of Legends"]
-    keywords_batch2 = ["Valorant"]
+        keywords_batch1 = ["Mobile Legends", "PUBG", "Free Fire", "Resident Evil", "League Of Legends"]
+        keywords_batch2 = ["Valorant"]
 
-    range_days = int(request.args.get('range', 1))
+        range_days = int(request.args.get('range', 1))
 
-    if range_days == 1:
-        timeframe = 'now 1-d'  # per jam
-    elif range_days == 7:
-        timeframe = 'now 7-d'  # per jam
-    elif range_days == 30:
-        timeframe = 'today 1-m'  # per hari
-    else:
-        timeframe = 'today 3-m'
+        if range_days == 1:
+            timeframe = 'now 1-d'
+        elif range_days == 7:
+            timeframe = 'now 7-d'
+        elif range_days == 30:
+            timeframe = 'today 1-m'
+        else:
+            timeframe = 'today 3-m'
 
-    # Batch pertama (maksimal 5 keyword)
-    pytrends.build_payload(keywords_batch1, timeframe=timeframe, geo='ID')
-    df1 = pytrends.interest_over_time()
+        # Batch pertama
+        pytrends.build_payload(keywords_batch1, timeframe=timeframe, geo='ID')
+        df1 = pytrends.interest_over_time()
 
-    # Batch kedua jika ada sisa keyword
-    if keywords_batch2:
-        pytrends.build_payload(keywords_batch2, timeframe=timeframe, geo='ID')
-        df2 = pytrends.interest_over_time()
+        # Batch kedua
+        if keywords_batch2:
+            pytrends.build_payload(keywords_batch2, timeframe=timeframe, geo='ID')
+            df2 = pytrends.interest_over_time()
+            df = pd.concat([df1[keywords_batch1], df2[keywords_batch2]], axis=1)
+            df["date"] = df1.index
+        else:
+            df = df1
+            df["date"] = df.index
 
-        # Gabungkan berdasarkan waktu
-        df = pd.concat([df1[keywords_batch1], df2[keywords_batch2]], axis=1)
-        df["date"] = df1.index
-    else:
-        df = df1
-        df["date"] = df.index
+        df.reset_index(drop=True, inplace=True)
 
-    df.reset_index(drop=True, inplace=True)
+        results = {}
+        for keyword in keywords_batch1 + keywords_batch2:
+            results[keyword] = [
+                {"time": row["date"].isoformat(), "score": row[keyword]}
+                for _, row in df.iterrows()
+            ]
+        return jsonify(results)
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-    # Format hasil sebagai JSON
-    results = {}
-    for keyword in keywords_batch1 + keywords_batch2:
-        results[keyword] = [
-            {"time": row["date"].isoformat(), "score": row[keyword]}
-            for _, row in df.iterrows()
-        ]
-    return jsonify(results)
 @app.route("/rekomendasi-judul", methods=["GET", "POST"])
 def rekomendasi_judul():
     if request.method == "POST":
@@ -123,7 +131,7 @@ def rekomendasi_judul():
         }
         
         try:
-            response = requests.post(DEEPSEEK_ENDPOINT, headers=headers, json=data)
+            response = requests.post(DEEPSEEK_ENDPOINT, headers=headers, json=data, timeout=30)
             response.raise_for_status()
             hasil = response.json()
             generated_text = hasil['choices'][0]['message']['content']
@@ -150,7 +158,7 @@ def get_trending_games():
     }
 
     try:
-        response = requests.get(url, params=params)
+        response = requests.get(url, params=params, timeout=30)
         data = response.json()
 
         if "items" not in data:
@@ -178,39 +186,43 @@ def trending_page():
 def search_page():
     return render_template('search.html')
 
-
 @app.route("/search_game")
 def search_game():
-    game = request.args.get("game", "").lower().strip()
-    
+    game = request.args.get("game")
     if not game:
         return jsonify({"error": "No game provided"}), 400
-    
-    # Step 1: Quick format check (optional)
-    if len(game) < 2 or game.isnumeric():
-        return jsonify({"error": "Invalid game name format"}), 400
-    
-    # Step 2: Game category validation
-    try:
-        pytrends.build_payload([game], cat=20, timeframe='now 1-d')  # cat=20 = Games
-        data = pytrends.interest_over_time()
-        if data.empty:
-            return jsonify({"error": "No trending data found in Games category"}), 400
-    except Exception as e:
-        return jsonify({"error": "Failed to validate game term"}), 500
-    
-    # Step 3: Process valid game
-    pytrends.build_payload([game], cat=20, timeframe='today 3-m')
-    data = pytrends.interest_over_time()
-    
-    if data.empty:
-        return jsonify({"labels": [], "scores": [], "game": game})
-    
-    return jsonify({
-        "labels": [dt.strftime('%Y-%m-%d') for dt in data.index],
-        "scores": data[game].tolist(),
-        "game": game
-    })
 
-if __name__ == '__main__':
+    try:
+        pytrends = TrendReq(hl='en-US', tz=360, timeout=(10,25), retries=2, backoff_factor=0.1)
+        pytrends.build_payload([game], cat=0, timeframe='today 3-m')
+        data = pytrends.interest_over_time()
+
+        if data.empty:
+            return jsonify({"labels": [], "scores": [], "game": game})
+
+        labels = [dt.strftime('%Y-%m-%d') for dt in data.index]
+        scores = data[game].tolist()
+
+        return jsonify({
+            "labels": labels,
+            "scores": scores,
+            "game": game
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Error handlers
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    return render_template('500.html'), 500
+
+# Untuk Vercel
+def handler(event, context):
+    return app(event, context)
+
+if _name_ == '_main_':
     app.run(debug=True)
