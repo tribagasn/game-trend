@@ -4,7 +4,13 @@ function createNavbar(currentPath = '') {
     { href: '/analytic', label: 'Analisis', path: '/analytic', icon: '📊' },
     { href: '/title', label: 'Title', path: '/title', icon: '🏆' },
     { href: '/trending', label: 'Trending', path: '/trending', icon: '🔥' },
-    { href: '/search', label: 'Searching', path: '/search', icon: '🔍' }
+    { href: '/search', label: 'Searching', path: '/search', icon: '🔍' },
+    // { href: '/lol', label: 'League of Legends', path: '/lol', icon: '🎮' },
+    // { href: '/ml', label: 'Mobile Legends', path: '/ml', icon: '📱' },
+    // { href: '/pubg', label: 'PUBG', path: '/pubg', icon: '📱' },
+    // { href: '/re', label: 'Resident Evil', path: '/re', icon: '📱' },
+    // { href: '/valorant', label: 'Valorant', path: '/valorant', icon: '📱' },
+    // { href: '/freefire', label: 'Free Fire', path: '/freefire', icon: '📱' }
   ];
 
   const navLinks = navItems.map(item => {

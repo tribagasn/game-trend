@@ -3,4 +3,3 @@ pytrends
 serverless-wsgi
 requests
 pandas
-gunicorn

@@ -9,9 +9,9 @@ import requests
 
 app = Flask(__name__)
 pytrends = TrendReq(hl='id-ID', tz=360)
-API_KEY = "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"
+API_KEY = "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"
 YOUTUBE_API_KEY = "AIzaSyDrwRrCYfhev87uSzwDxR3LRq1I0rQtwIw"
-DEEPSEEK_ENDPOINT = "https://api.deepseek.com/v1/chat/completions"
+DEEPSEEK_ENDPOINT = "https://openrouter.ai/api/v1"
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 GAMES = ["Mobile Legends", "PUBG", "Free Fire", "Resident Evil", "League of Legends", "Valorant"]
@@ -92,6 +92,9 @@ def get_trend_data():
         df["date"] = df.index
 
     df.reset_index(drop=True, inplace=True)
+
+    filename = f"trend_data_{range_days}d.csv"
+    df.to_csv(filename, index=False)
 
     # Format hasil sebagai JSON
     results = {}
@@ -213,4 +216,4 @@ def search_game():
     })
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+    app.run(debug=True)
